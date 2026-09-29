@@ -1,0 +1,30 @@
+# Plan
+
+- Week 05: Proposal, Timeline, Dev Environment, initial repo
+  - [Proposal.md](PROPOSAL.md)
+  - [Plan.md](PLAN.md)
+- Week 06: Architectural Design
+  - State Representation
+  - OOP Design
+- Week 07: Phase 1
+  - Map OOP Design to classes with TODOs
+  - Implement valid moves for pieces
+- Week 08: Phase 2
+  - Complete the basic chess engine
+  - Player by player move capability
+- Week 09: Phase 3 (midpoint checkpoint)
+  - Learn PyGame
+  - Implement PyGame wrapper around the library
+- Week 10: Phase 4 (feature freeze)
+  - Checkmate detector
+  - Implement special features like castling and en passant
+  - Random move bot
+  - Material-counting greedy bot (optional)
+- Week 11: Integration and Testing
+  - Try playing game with friends and aganist supported bots
+  - Debug any errors and release first MVP
+- Week 12: Refinement & Optimization
+- Week 13: Documentation
+- Week 14: Presentation Prep & Buffer
+- Week 15: Final Presentation
+- Week 16: home 🏡 ;)
