@@ -29,3 +29,16 @@
 
 # TODO by Tommorow
 make a small summary of all classes and list what they do.
+
+1. Piece Class
+    - This class will have every chess piece and their abilities (how it moves) like cross, L shape, jump etc. But a piece doesn't know where it is on the board!
+2. Board Class
+    - The board class will basically render the entire chess board and have 64 cells, with 32 pieces and would place the pieces at their start position whenever a new game is played. Board would know where each piece is!
+3. GameEngine
+    - The GameEngine class will keep a track of the players who are currently playing against each other and keep a track of also whose turn is it next. While doing so, it will also check if a player has been checkmated and check if the move which player wants to play is legal or not.
+4. Moves
+    - The Moves class would have piece, startPos, and endPos as its member variables and would basically move a specific piece from point A to point B.
+5. Cel
+    - A cell would be a part of the 8x8 Chess Board and would hold information like if the cell contains any piece or not. It would have a column number, row number for indexing and would show the final positions as (1,2,3,4,5,6,7,8) x (a,b,c,d,e,f,g,h,)
+6. Player
+    - The Player Class would hold the stats, name of the Player playing the match and would have an ability to get the cell of the piece so it displays it properly (like E4, A1, etc)
