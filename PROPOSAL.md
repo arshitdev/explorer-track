@@ -26,7 +26,7 @@ This is part of my Coding Cafe course @ Plaksha. The course goes over basics of 
 - Good Object-Oriented Design
 - Chess Game current state representation in python data structures
 - Evaluate different bot strategies
-- Learn PyGame and implemented a wrapper on top of this engine to be able to visualize the current state and make moves visually
+- Learn PyGame and implement a wrapper on top of this engine to be able to visualize the current state and make moves visually
 
 ## Timeline & Feasibility
 
