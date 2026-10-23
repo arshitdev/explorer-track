@@ -125,7 +125,6 @@ for each class, list the variables which will capture the information needed by 
 
 ## Classes with their functions
 
-These functions follow our own class design, using `simple_chess.zip` as a reference for how responsibilities are divided. Functions marked **written** already exist in our Python files. The remaining functions are planned; their names and parameters can be refined as we implement them. The signatures below leave out `self` for readability, but instance methods will include it in the code.
 
 1. **Piece**
 
