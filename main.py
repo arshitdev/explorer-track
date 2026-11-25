@@ -1,3 +1,6 @@
-from chess import *
+"""Start the chess game. Same as running:   python -m chess.main"""
 
-print(a)
+from chess.main import main
+
+if __name__ == "__main__":
+    main()

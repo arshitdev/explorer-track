@@ -153,9 +153,13 @@ class Pawn(Piece):
                 moves.append((r2, col))
 
         # 3. Capture diagonally forward, only if an enemy piece is there
+        # 4. En passant: capture diagonally onto the empty square an enemy pawn
+        #    just skipped over with its two-square move
         for r, c in self.get_attacks(board, row, col):
             target = board.get_piece(r, c)
             if target is not None and target.color != self.color:
+                moves.append((r, c))
+            elif target is None and (r, c) == board.en_passant:
                 moves.append((r, c))
         return moves
 

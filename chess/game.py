@@ -23,9 +23,15 @@ class Game:
         self.saved_boards = []       # a copy of the board before each move (for undo)
         self.game_over = False
         self.result = ""             # e.g. "Checkmate! White wins."
+        self.resigned = False        # True if the game ended because someone resigned
+        self.positions = [self.position_key()]   # every position so far, for threefold repetition
 
     def current_player(self):
         return self.players[self.current_color]
+
+    def position_key(self):
+        """The current position plus whose turn it is (used to spot repetitions)."""
+        return (self.board.position_key(), self.current_color)
 
     # ------------------------------------------------------------ the rules
 
@@ -122,11 +128,12 @@ class Game:
         separator = "x" if captured else "-"
         self.history.append(f"{start_text}{separator}{end_text}")
         self.current_color = other_color(self.current_color)
+        self.positions.append(self.position_key())
         self.check_game_over()
         return captured
 
     def check_game_over(self):
-        """After every move: has the player to move been checkmated or stalemated?"""
+        """After every move: is it checkmate, stalemate or a draw?"""
         color = self.current_color
         if self.is_checkmate(color):
             self.game_over = True
@@ -134,13 +141,29 @@ class Game:
         elif self.is_stalemate(color):
             self.game_over = True
             self.result = "Stalemate! The game is a draw."
+        elif self.board.has_insufficient_material():
+            self.game_over = True
+            self.result = "Draw! Not enough pieces left to checkmate."
+        elif self.board.halfmove_clock >= 100:      # 50 moves by each player
+            self.game_over = True
+            self.result = "Draw by the 50-move rule."
+        elif self.positions.count(self.positions[-1]) >= 3:
+            self.game_over = True
+            self.result = "Draw by threefold repetition."
 
     def undo(self):
-        """Take back the last move."""
+        """Take back the last move (or take back a resignation)."""
+        if self.resigned:
+            # Resigning didn't move any pieces, so just carry on from the same position
+            self.resigned = False
+            self.game_over = False
+            self.result = ""
+            return
         if len(self.saved_boards) == 0:
             raise ValueError("There are no moves to undo.")
         self.board = self.saved_boards.pop()
         self.history.pop()
+        self.positions.pop()
         self.current_color = other_color(self.current_color)
         self.game_over = False
         self.result = ""
@@ -149,4 +172,5 @@ class Game:
         """The player whose turn it is gives up."""
         loser = self.current_color
         self.game_over = True
+        self.resigned = True
         self.result = f"{loser.capitalize()} resigned. {other_color(loser).capitalize()} wins."
