@@ -43,3 +43,6 @@ Status: [x] done, [~] partly done, [ ] not started
 - Undo and resign
 - Helpful error messages for illegal moves
 - Legal-move highlights, check highlight and move history in the GUI
+- Piece images in the GUI
+- Saving games to JSON files and loading them again
+- Game review with Stockfish: advice per phase (opening, middlegame, endgame), suggested by my professor

@@ -5,6 +5,9 @@ This document describes how the code is organised right now. The engine is split
 ```
 gui.py      ChessGUI, Button      window, mouse, drawing
   |
+analysis.py GameAnalyzer, Report  game review (uses stockfish.py)
+storage.py  save_game, load_game  games as JSON files
+  |
 game.py     Game                  turns, legal moves, castling, checkmate, draws, history, undo
   |
 player.py   Player, ComputerPlayer
@@ -132,8 +135,32 @@ New bot strategies can be added as more `Player` subclasses with their own `choo
 - **ChessGUI:** owns the pygame window and the current `Game`.
   - Variables: `game`, `selected` (the clicked piece's square), `highlights` (its legal moves), `message` (status text), `buttons`.
   - Input: `handle_click` decides whether a click is a button, selecting a piece or a move; `select`, `try_move`, `press_button`, `undo` (against the computer it takes back both moves), `computer_turn`.
-  - Drawing: `draw_board` (squares, selection, red king in check), `draw_pieces` (a circle with the piece letter), `draw_move_markers` (dots for moves, rings for captures), `draw_panel` (status, move history, buttons).
+  - Drawing: `draw_board` (squares, selection, red king in check), `draw_pieces` (the piece images from `assets/`, loaded once by `load_piece_images`; falls back to a circle with the piece letter if an image is missing), `draw_move_markers` (dots for moves, rings for captures), `draw_panel` (status, move history, buttons), `draw_review` (the game review over the board).
+  - Saving and review: `save_if_finished` saves the game once it ends; `review` runs `review_game` for the human player(s) and stores the advice in `review_lines`.
   - `run()`: the main loop, which handles events, draws at up to 30 frames per second and lets the computer move after a short delay.
+
+### 7. Storage (`storage.py`)
+
+- **`save_game(game)`:** writes the players, the result and `game.history` to a new JSON file in `saved_games/` and returns its path. The board itself is not stored.
+- **`load_game(path)`:** reads the file and replays every move with `Game.make_move`, so the position is rebuilt (and checked) by the normal rules. A resignation is copied across from the saved result.
+- **`list_saved_games()`:** the paths of all saved games.
+
+### 8. Stockfish (`stockfish.py`)
+
+- **Stockfish:** starts the Stockfish program installed on the computer and talks to it with UCI text commands (`position startpos moves e2e4 ...`, `go depth 16`).
+  - **`evaluate(moves)`:** returns `(score, best_move)` for the position after those moves. The score is in centipawns from White's point of view; a forced checkmate counts as ±10000.
+  - Can be used as `with Stockfish() as engine:` so the program is always closed.
+- **`is_installed()`:** whether Stockfish can be found.
+
+Keeping Stockfish behind this small class means the analysis code doesn't know about processes or UCI, and a different engine could be swapped in with the same `evaluate` method.
+
+### 9. Analysis (`analysis.py`)
+
+- **`game_phase(board, half_moves)`:** endgame if no queens are left or the pieces (not counting pawns and kings) add up to 26 or less; opening for the first 10 moves; otherwise middlegame.
+- **MoveReview:** one move's number, colour, phase, loss, label (good / inaccuracy / mistake / blunder) and Stockfish's better move.
+- **GameAnalyzer:** replays the game, asks the engine to score every position once, and works out each move's loss (how much the score dropped for the player who moved, capped at 1000). Also notes whether each side castled.
+- **Report:** for one colour, grades each phase by its average loss (strong / decent / shaky / weak) and writes the advice: a line per phase, a headline comparing the best and worst phase, a tip for a weak phase, a reminder to castle, and the biggest mistake.
+- **`review_game(moves, colors)`:** runs all of the above and returns `{color: advice lines}`. Also runnable from the terminal on a saved game.
 
 ## How a move flows through the code
 
